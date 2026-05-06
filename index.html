@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fore Group — Onboarding Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--fg:#8DC63F;--dark:#1a1f16;--mid:#2d3526;--bg:#f5f4f0;--card:#fff;--border:rgba(0,0,0,0.08);--text:#1a1f16;--muted:#6b7060;--font:"DM Sans",sans-serif;--mono:"DM Mono",monospace}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px}
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);position:relative;overflow:hidden}
+.auth-bg{position:absolute;inset:0;opacity:0.04;pointer-events:none}
+.auth-card{background:var(--card);border-radius:16px;padding:48px 44px;width:100%;max-width:420px;position:relative;z-index:1}
+.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:36px;justify-content:center}
+.auth-logo .ag{color:var(--fg);font-weight:700;font-size:22px}.auth-logo .aw{color:var(--dark);font-weight:700;font-size:22px}.auth-logo .ad{color:rgba(0,0,0,0.2);margin:0 6px}
+.auth-title{font-size:20px;font-weight:600;margin-bottom:6px;text-align:center}
+.auth-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:32px;line-height:1.6}
+.auth-label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px}
+.auth-input{width:100%;padding:11px 14px;border:0.5px solid var(--border);border-radius:8px;font-family:var(--font);font-size:14px;background:#fafaf8;color:var(--text);outline:none;transition:border-color .15s;margin-bottom:20px}
+.auth-input:focus{border-color:var(--fg);background:#fff}
+.auth-btn{width:100%;padding:12px;background:var(--dark);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font);margin-bottom:12px}
+.auth-btn:hover{background:var(--mid)}
+.auth-error{font-size:12px;color:#8b2020;background:#fde8e8;border:0.5px solid #f0b8b8;border-radius:6px;padding:9px 12px;margin-bottom:16px;display:none}
+.auth-error.show{display:block}
+.auth-hint{font-size:11px;color:var(--muted);text-align:center;line-height:1.6}
+.auth-footer{margin-top:28px;padding-top:18px;border-top:0.5px solid var(--border);text-align:center;font-size:11px;color:var(--muted)}
+.nav{background:var(--dark);padding:0 28px;display:flex;align-items:center;height:54px;gap:20px;position:sticky;top:0;z-index:200}
+.nav-logo{display:flex;align-items:center;gap:8px;color:#fff;font-weight:600;font-size:15px;white-space:nowrap}
+.nav-logo .g{color:var(--fg)}
+.nav-tabs{display:flex;gap:4px;flex:1}
+.ntab{padding:7px 14px;border-radius:6px;cursor:pointer;color:rgba(255,255,255,0.5);font-size:13px;border:none;background:none;transition:all .15s;font-family:var(--font);position:relative}
+.ntab:hover{color:rgba(255,255,255,0.85)}.ntab.active{background:rgba(255,255,255,0.1);color:#fff;font-weight:500}
+.tab-dot{position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:#e24b4a;border:1.5px solid var(--dark)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.role-sw{display:flex;gap:3px;background:rgba(255,255,255,0.06);border-radius:6px;padding:3px}
+.rbtn{padding:4px 12px;border-radius:4px;font-size:11px;cursor:pointer;border:none;background:none;color:rgba(255,255,255,0.45);font-family:var(--font);transition:all .15s}
+.rbtn.active{background:rgba(255,255,255,0.15);color:#fff}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:var(--fg);color:var(--dark);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+.notif-wrap{position:relative}
+.notif-btn{width:36px;height:36px;border-radius:8px;border:0.5px solid rgba(255,255,255,0.12);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative}
+.notif-btn svg{width:17px;height:17px;stroke:rgba(255,255,255,0.7);fill:none;stroke-width:1.8}
+.ndot{width:7px;height:7px;border-radius:50%;background:#e24b4a;position:absolute;top:7px;right:8px;border:1.5px solid var(--dark)}.ndot.hidden{display:none}
+.notif-panel{position:fixed;top:62px;right:20px;width:320px;background:var(--card);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;display:none;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,0.12)}
+.notif-panel.open{display:block}
+.notif-head{padding:10px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.notif-head span{font-size:12px;font-weight:500}
+.notif-clear{font-size:11px;color:var(--muted);cursor:pointer;border:none;background:none;font-family:var(--font)}
+.notif-item{padding:10px 14px;border-bottom:0.5px solid var(--border);display:flex;gap:9px;align-items:flex-start}.notif-item:last-child{border-bottom:none}
+.ni-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ni-text{font-size:12px;line-height:1.5}.ni-time{font-size:11px;color:var(--muted);margin-top:1px}
+.notif-empty{padding:24px;text-align:center;font-size:12px;color:var(--muted)}
+.logout-btn{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:6px;border:0.5px solid rgba(255,255,255,0.15);background:none;color:rgba(255,255,255,0.6);font-size:12px;cursor:pointer;font-family:var(--font)}
+.logout-btn:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9)}
+.logout-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
+.sync-status{display:flex;align-items:center;gap:6px}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.2)}
+.sync-dot.ok{background:var(--fg)}.sync-dot.syncing{background:#f0c040;animation:pulse .8s ease-in-out infinite}.sync-dot.err{background:#e24b4a}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.app-shell{display:none}.app-shell.visible{display:block}
+.page{display:none;padding:28px;min-height:calc(100vh - 54px)}.page.active{display:block}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.ph-text h1{font-size:21px;font-weight:600}.ph-text p{font-size:13px;color:var(--muted);margin-top:3px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.sc{background:var(--card);border:0.5px solid var(--border);border-radius:10px;padding:16px}
+.sc .sl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.sc .sv{font-size:28px;font-weight:600;line-height:1}.sc .ss{font-size:11px;color:var(--muted);margin-top:4px}
+.sc.g .sv{color:#3d7a12}.sc.a .sv{color:#a06010}.sc.r .sv{color:#8b2020}
+.tcard{background:var(--card);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.thead-row{padding:13px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.thead-row h2{font-size:13px;font-weight:500}
+table.mt{width:100%;border-collapse:collapse;table-layout:fixed}
+table.mt th{font-size:11px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.04em;padding:9px 16px;text-align:left;border-bottom:0.5px solid var(--border);background:#fafaf8}
+table.mt td{padding:12px 16px;border-bottom:0.5px solid var(--border);font-size:13px;vertical-align:middle}
+table.mt tr:last-child td{border-bottom:none}
+table.mt tbody tr:hover td{background:#fafaf8;cursor:pointer}
+.pp{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:500;border:0.5px solid transparent;white-space:nowrap;margin-right:3px;margin-bottom:2px}
+.pp.clickable{cursor:pointer;position:relative}
+.popover{position:absolute;top:calc(100% + 6px);left:0;min-width:200px;background:var(--card);border:0.5px solid var(--border);border-radius:8px;padding:6px;z-index:400;display:none;box-shadow:0 4px 16px rgba(0,0,0,0.1)}
+.popover.open{display:block}
+.pop-item{padding:6px 8px;border-radius:5px;font-size:12px;display:flex;align-items:center;gap:7px}
+.pop-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
+.ba{background:#e8f4d8;color:#2d6010}.bp{background:#fef3d0;color:#7a5010}.bc{background:#e0e0e0;color:#555}.bb{background:#fde8e8;color:#8b2020}.bpen{background:#fff3e0;color:#7a4000}
+.prog{display:flex;align-items:center;gap:8px}
+.prog-bar{flex:1;height:5px;background:#e8e8e0;border-radius:3px;overflow:hidden}.prog-fill{height:100%;border-radius:3px}
+.prog-pct{font-size:11px;color:var(--muted);min-width:30px;text-align:right;font-family:var(--mono)}
+.spec{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}
+.sav{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.sr{background:#dbeafe;color:#1e4d8c}.sj{background:#e8f4d8;color:#2d6010}.sf{background:#fce8d8;color:#7a3010}.st{background:#ede8fe;color:#4c2d8c}
+.glive{font-size:12px;color:var(--muted)}.glive.soon{color:#7a5010;font-weight:500}.glive.overdue{color:#8b2020;font-weight:500}
+.leave-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:500;background:#fde8e8;color:#8b2020}
+.leave-warning{background:#fff3f3;border:0.5px solid #f0b8b8;border-radius:8px;padding:12px 14px;margin-top:10px;font-size:12px;color:#8b2020;display:none}.leave-warning.show{display:block}
+.on-leave-row{background:#fff8f8 !important}
+.detail-panel{background:var(--card);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;margin-top:16px}
+.dp-head{padding:18px 22px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.dp-close{width:30px;height:30px;border-radius:6px;border:0.5px solid var(--border);background:none;cursor:pointer;font-size:18px;color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dp-close:hover{background:#fafaf8}
+.dp-sec{padding:16px 22px;border-bottom:0.5px solid var(--border)}.dp-sec:last-child{border-bottom:none}
+.dp-sec h3{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:12px}
+.mod-section{border:0.5px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.mod-head{padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.mod-head:hover{background:#fafaf8}
+.mod-label{font-size:13px;font-weight:500;flex-shrink:0}
+.mod-prog-bar{flex:1;height:4px;background:#e8e8e0;border-radius:2px;overflow:hidden}
+.mod-prog-fill{height:100%;border-radius:2px}
+.mod-stats{font-size:11px;color:var(--muted);font-family:var(--mono);flex-shrink:0;min-width:55px;text-align:right}
+.mod-toggle{font-size:11px;color:var(--muted);flex-shrink:0;transition:transform .2s}.mod-toggle.open{transform:rotate(180deg)}
+.mod-tasks{display:none;border-top:0.5px solid var(--border)}.mod-tasks.open{display:block}
+.ci{display:flex;align-items:flex-start;gap:10px;padding:8px 14px;border-bottom:0.5px solid var(--border)}.ci:last-child{border-bottom:none}
+.ci:hover{background:#fafaf8}
+.cb{width:18px;height:18px;border-radius:4px;border:1.5px solid rgba(0,0,0,0.15);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all .15s}
+.cb.done::after{content:"\2713";font-size:11px;font-weight:700;color:#fff}
+.ct .ctitle{font-size:13px;font-weight:500;line-height:1.4}.ct .cdesc{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5}
+.ct.done .ctitle{color:var(--muted);text-decoration:line-through}
+.cbtn{font-size:11px;padding:3px 8px;border-radius:4px;border:0.5px solid var(--fg);color:#3d6e10;background:#f0f8e8;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:4px;margin-top:5px;font-family:var(--font)}
+.cbtn:hover{background:#e4f2d4}
+.golive-task{background:#f0fdf4}.golive-task .ctitle{color:#166534;font-weight:600}
+.ireland-flag{background:#fffbea}
+.ireland-badge{font-size:10px;background:#fef3d0;color:#7a5010;padding:1px 6px;border-radius:3px;margin-left:6px;font-weight:500}
+.overall-prog-bar{height:8px;background:#e8e8e0;border-radius:4px;overflow:hidden;margin-bottom:16px}
+.overall-prog-fill{height:100%;border-radius:4px;transition:width .4s}
+.inbox-wrap{background:var(--card);border:1.5px solid #f0c040;border-radius:10px;overflow:hidden;margin-bottom:22px}
+.inbox-head{padding:13px 16px;border-bottom:0.5px solid rgba(240,192,64,0.3);display:flex;align-items:center;justify-content:space-between;background:#fffbea}
+.inbox-head h2{font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px}
+.inbox-badge{background:#f0c040;color:#5a4000;font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px}
+.pending-item{padding:16px;border-bottom:0.5px solid var(--border);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
+.pending-item:last-child{border-bottom:none}.pending-item:hover{background:#fffdf0}
+.pi-name{font-size:14px;font-weight:600;margin-bottom:6px}
+.pi-meta{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.pi-actions{display:flex;gap:6px;flex-direction:column;align-items:flex-end}
+.hs-dot{width:6px;height:6px;border-radius:50%;background:#ff7a59;flex-shrink:0}
+.btn-approve{padding:7px 14px;background:#3d7a12;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:var(--font)}
+.btn-approve:hover{background:#2d5c0d}
+.btn-dismiss{padding:7px 12px;background:none;color:var(--muted);border:0.5px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;font-family:var(--font)}
+.cal-wrap{background:var(--card);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.cal-head{padding:13px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cal-head h2{font-size:13px;font-weight:500}
+.cal-nav{display:flex;align-items:center;gap:10px}
+.cal-nav button{width:28px;height:28px;border-radius:6px;border:0.5px solid var(--border);background:none;cursor:pointer;font-size:15px;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.cal-nav button:hover{background:#fafaf8}
+.cal-month-label{font-size:13px;font-weight:500;min-width:120px;text-align:center}
+.cal-dow-grid{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:0.5px solid var(--border)}
+.cal-dow{padding:8px 0;text-align:center;font-size:11px;color:var(--muted);font-weight:500}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-day{min-height:80px;border-right:0.5px solid var(--border);border-bottom:0.5px solid var(--border);padding:6px}
+.cal-day:nth-child(7n){border-right:none}.cal-day:nth-last-child(-n+7){border-bottom:none}
+.cal-day.other-month .day-num{color:#ccc}.cal-day.today .day-num{background:var(--dark);color:#fff;border-radius:50%}
+.day-num{font-size:11px;font-weight:500;margin-bottom:3px;width:20px;height:20px;display:flex;align-items:center;justify-content:center}
+.cal-event{font-size:10px;padding:2px 5px;border-radius:3px;margin-bottom:2px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-event.start{background:#e8f4d8;color:#2d6010}.cal-event.golive{background:#fce8d8;color:#8c3a10;font-weight:500}.cal-event.leave{background:#fde8e8;color:#8b2020}
+.cal-legend{padding:10px 16px;border-top:0.5px solid var(--border);display:flex;gap:18px;font-size:11px;color:var(--muted)}
+.leg-i{display:flex;align-items:center;gap:5px}.leg-d{width:8px;height:8px;border-radius:2px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cap-row{padding:11px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px}.cap-row:last-child{border-bottom:none}
+.cap-bar-wrap{flex:1;height:8px;background:#e8e8e0;border-radius:4px;overflow:hidden}.cap-fill{height:100%;border-radius:4px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:600;align-items:flex-start;justify-content:center;padding-top:60px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal-inner{background:var(--card);border-radius:12px;overflow:hidden;width:100%;max-width:580px;margin:auto}
+.mhead{padding:20px 24px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mhead h2{font-size:16px;font-weight:600}
+.mclose{width:30px;height:30px;border-radius:6px;border:0.5px solid var(--border);background:none;cursor:pointer;font-size:18px;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.mbody{padding:20px 24px}
+.mbody label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:5px;margin-top:16px}
+.mbody label:first-child{margin-top:0}
+.mbody input,.mbody select,.mbody textarea{width:100%;padding:9px 11px;border:0.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;background:#fafaf8;color:var(--text);outline:none;transition:border-color .15s}
+.mbody input:focus,.mbody select:focus{border-color:var(--fg)}
+.mbody textarea{resize:vertical;min-height:70px}
+.mfooter{padding:16px 24px;border-top:0.5px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.btn-p{padding:9px 20px;background:var(--dark);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font)}
+.btn-p:hover{background:var(--mid)}
+.btn-s{padding:9px 20px;background:none;color:var(--muted);border:0.5px solid var(--border);border-radius:6px;font-size:13px;cursor:pointer;font-family:var(--font)}
+.cbtag{padding:5px 11px;border-radius:5px;border:0.5px solid var(--border);font-size:12px;cursor:pointer;color:var(--muted);background:#fafaf8;user-select:none;transition:all .15s}
+.cbtag.sel{background:#e8f4d8;color:#2d6010;border-color:#aad87a;font-weight:500}
+.cbrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.abtn{padding:7px 14px;background:var(--dark);color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:500}
+.abtn:hover{background:var(--mid)}
+.abtn.o{background:none;color:var(--muted);border:0.5px solid var(--border)}.abtn.o:hover{background:#fafaf8}
+.doc-layout{display:flex;gap:24px}
+.doc-sidebar{width:200px;flex-shrink:0}
+.dns{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:12px 10px 4px;font-weight:500}
+.dni{padding:7px 10px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--muted);margin-bottom:2px}
+.dni:hover{background:rgba(0,0,0,0.04);color:var(--text)}.dni.active{background:#e8f4d8;color:#2d6010;font-weight:500}
+.da{display:none}.da.active{display:block}
+.da h1{font-size:20px;font-weight:600;margin-bottom:6px}
+.da .dm{font-size:12px;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.da h2{font-size:14px;font-weight:600;margin:18px 0 8px}
+.da p{font-size:13px;line-height:1.7;margin-bottom:10px}
+.da ul{padding-left:20px;margin-bottom:10px}.da li{font-size:13px;line-height:1.85}
+.sb{background:#fafaf8;border:0.5px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px;display:flex;gap:12px}
+.sn{width:22px;height:22px;border-radius:50%;background:var(--dark);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.st-t{font-size:13px;font-weight:500;margin-bottom:3px}.st-d{font-size:12px;color:var(--muted);line-height:1.6}
+.nb{background:#fffbea;border-left:3px solid #f0c040;padding:10px 14px;margin:12px 0}.nb p{margin:0;font-size:12px;color:#6b5a10}
+.ib{background:#f0f8ff;border-left:3px solid #60a0e0;padding:10px 14px;margin:12px 0}.ib p{margin:0;font-size:12px;color:#1e4070}
+.code-block{background:#fafaf8;border:0.5px solid var(--border);border-radius:6px;padding:12px 14px;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.8;margin:8px 0;word-break:break-all}
+.settings-section{background:var(--card);border:0.5px solid var(--border);border-radius:10px;padding:24px;margin-bottom:16px}
+.settings-section h2{font-size:15px;font-weight:600;margin-bottom:4px}
+.settings-section p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6}
+.settings-field{margin-bottom:16px}
+.settings-field label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px}
+.settings-field input{width:100%;max-width:360px;padding:9px 11px;border:0.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;background:#fafaf8;color:var(--text);outline:none}
+.danger-zone{background:#fff8f8;border:0.5px solid #f0b8b8;border-radius:10px;padding:24px;margin-bottom:16px}
+.danger-zone h2{font-size:15px;font-weight:600;color:#8b2020;margin-bottom:4px}
+.danger-zone p{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6}
+.btn-danger{padding:9px 20px;background:#8b2020;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font)}
+.btn-danger:hover{background:#6e1818}
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--dark);color:#fff;padding:11px 18px;border-radius:8px;font-size:13px;font-weight:500;transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div id="screen-setup" class="auth-wrap" style="display:none;">
+  <div class="auth-bg"><svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"><path d="M0 600L200 0L400 300L600 0L800 600" stroke="#8DC63F" stroke-width="60" fill="none" opacity="0.3"/></svg></div>
+  <div class="auth-card">
+    <div class="auth-logo"><svg width="28" height="20" viewBox="0 0 22 16" fill="none"><path d="M0 16L5.5 0L11 8L16.5 0L22 16" stroke="#8DC63F" stroke-width="2.5" fill="none" stroke-linejoin="round"/></svg><span class="ag">FORE</span><span class="ad">|</span><span class="aw">GROUP</span></div>
+    <div class="auth-title">Welcome to the Onboarding Hub</div>
+    <div class="auth-sub">First-time setup. Create the shared team password.</div>
+    <label class="auth-label">Create team password</label>
+    <input class="auth-input" type="password" id="setup-pw1" placeholder="Choose a strong password" onkeydown="if(event.key==='Enter')document.getElementById('setup-pw2').focus()"/>
+    <label class="auth-label">Confirm password</label>
+    <input class="auth-input" type="password" id="setup-pw2" placeholder="Confirm password" onkeydown="if(event.key==='Enter')completeSetup()"/>
+    <div class="auth-error" id="setup-error"></div>
+    <button class="auth-btn" onclick="completeSetup()">Set password &amp; enter hub</button>
+    <div class="auth-hint">Share this password with your team via Slack.</div>
+    <div class="auth-footer">Fore Group Onboarding Hub &nbsp;&middot;&nbsp; Admin setup</div>
+  </div>
+</div>
+
+<div id="screen-login" class="auth-wrap" style="display:none;">
+  <div class="auth-bg"><svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"><path d="M0 600L200 0L400 300L600 0L800 600" stroke="#8DC63F" stroke-width="60" fill="none" opacity="0.3"/></svg></div>
+  <div class="auth-card">
+    <div class="auth-logo"><svg width="28" height="20" viewBox="0 0 22 16" fill="none"><path d="M0 16L5.5 0L11 8L16.5 0L22 16" stroke="#8DC63F" stroke-width="2.5" fill="none" stroke-linejoin="round"/></svg><span class="ag">FORE</span><span class="ad">|</span><span class="aw">GROUP</span></div>
+    <div class="auth-title">Onboarding Hub</div>
+    <div class="auth-sub">Enter the team password to access your dashboard.</div>
+    <label class="auth-label">Team password</label>
+    <input class="auth-input" type="password" id="login-pw" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="auth-error" id="login-error">Incorrect password. Please try again.</div>
+    <button class="auth-btn" onclick="doLogin()">Sign in</button>
+    <div class="auth-hint">Contact Tiaan if you need the team password.</div>
+    <div class="auth-footer">Fore Group Onboarding Hub &nbsp;&middot;&nbsp; Internal use only</div>
+  </div>
+</div>
+
+<div class="app-shell" id="app-shell">
+  <nav class="nav">
+    <div class="nav-logo"><svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M0 16L5.5 0L11 8L16.5 0L22 16" stroke="#8DC63F" stroke-width="2.5" fill="none" stroke-linejoin="round"/></svg><span class="g">FORE</span>&nbsp;GROUP&nbsp;<span style="color:rgba(255,255,255,0.25);font-weight:300;margin:0 4px">|</span>&nbsp;Onboarding Hub</div>
+    <div class="nav-tabs">
+      <button class="ntab active" onclick="showPage('dashboard',this)">Dashboard</button>
+      <button class="ntab" id="tab-inbox" onclick="showPage('inbox',this)">Inbox</button>
+      <button class="ntab" onclick="showPage('onboardings',this)">Onboardings</button>
+      <button class="ntab" id="cap-tab" onclick="showPage('capacity',this)">Capacity</button>
+      <button class="ntab" onclick="showPage('docs',this)">Documentation</button>
+      <button class="ntab" id="settings-tab" onclick="showPage('settings',this)">Settings</button>
+    </div>
+    <div class="nav-right">
+      <div class="sync-status"><div class="sync-dot" id="sync-dot"></div><span id="sync-label" style="font-size:11px;color:rgba(255,255,255,0.4);"></span></div>
+      <div class="role-sw"><button class="rbtn active" id="rh" onclick="setRole('head')">Head</button><button class="rbtn" id="rs" onclick="setRole('spec')">Specialist</button></div>
+      <div class="notif-wrap">
+        <button class="notif-btn" onclick="toggleNotif(event)"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="ndot hidden" id="ndot"></div></button>
+        <div class="notif-panel" id="npanel"><div class="notif-head"><span>Recent activity</span><button class="notif-clear" onclick="clearNotifs()">Mark all read</button></div><div id="nlist"></div></div>
+      </div>
+      <div class="nav-avatar" id="nav-av">T</div>
+      <button class="logout-btn" onclick="doLogout()"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign out</button>
+    </div>
+  </nav>
+
+  <div class="page active" id="page-dashboard">
+    <div class="ph"><div class="ph-text"><h1 id="dgreet">Good morning, Tiaan</h1><p id="dsub">Here's your team's onboarding overview</p></div><button class="abtn" onclick="openModal()">+ New onboarding</button></div>
+    <div class="stats-row">
+      <div class="sc"><div class="sl">Active</div><div class="sv" id="st-act">-</div><div class="ss">onboardings</div></div>
+      <div class="sc" style="border-color:#f0c040;"><div class="sl">Pending review</div><div class="sv" id="st-pend" style="color:#a06010;">-</div><div class="ss">from HubSpot</div></div>
+      <div class="sc a"><div class="sl">Avg. progress</div><div class="sv" id="st-avg">-</div><div class="ss">across active</div></div>
+      <div class="sc r"><div class="sl">Blocked</div><div class="sv" id="st-blk">-</div><div class="ss">needs attention</div></div>
+    </div>
+    <div class="tcard"><div class="thead-row"><h2>Active onboardings</h2></div>
+      <table class="mt"><thead><tr><th style="width:22%">Client</th><th style="width:22%">Modules</th><th style="width:16%">Specialist</th><th style="width:22%">Overall progress</th><th style="width:12%">Go-live</th><th style="width:6%">Status</th></tr></thead><tbody id="dash-tbody"></tbody></table>
+    </div>
+    <div class="cal-wrap">
+      <div class="cal-head"><h2>Go-live calendar</h2><div class="cal-nav"><button onclick="calPrev()">&#8249;</button><span class="cal-month-label" id="cal-lbl">-</span><button onclick="calNext()">&#8250;</button></div></div>
+      <div class="cal-dow-grid" id="cal-dow"></div><div class="cal-grid" id="cal-grid"></div>
+      <div class="cal-legend"><div class="leg-i"><div class="leg-d" style="background:#c5e89a"></div>Start</div><div class="leg-i"><div class="leg-d" style="background:#f0bea0"></div>Go-live</div><div class="leg-i"><div class="leg-d" style="background:#fde8e8"></div>On leave</div></div>
+    </div>
+    <div id="detail-dashboard"></div>
+  </div>
+
+  <div class="page" id="page-inbox">
+    <div class="ph"><div class="ph-text"><h1>Inbox</h1><p>Closed-Won deals from HubSpot awaiting review</p></div><button class="abtn o" onclick="syncHubSpot()">&#8635; Sync HubSpot</button></div>
+    <div id="inbox-content"></div>
+  </div>
+
+  <div class="page" id="page-onboardings">
+    <div class="ph">
+      <div class="ph-text"><h1>Onboardings</h1><p id="ob-sub">All projects</p></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select id="f-status" onchange="renderObTable()" style="font-size:12px;padding:6px 9px;border:0.5px solid var(--border);border-radius:6px;background:#fafaf8;color:var(--muted);font-family:var(--font);"><option value="">All statuses</option><option>Active</option><option>Pending</option><option>Blocked</option><option>Complete</option></select>
+        <select id="f-mod" onchange="renderObTable()" style="font-size:12px;padding:6px 9px;border:0.5px solid var(--border);border-radius:6px;background:#fafaf8;color:var(--muted);font-family:var(--font);"><option value="">All modules</option><option>Golf</option><option>Retail (R)</option><option>Restaurant (K)</option><option>Restaurant (L)</option><option>Accounting (Shogo)</option><option>eCommerce</option><option>Custom App</option><option>Booxi</option><option>Fore Connect</option></select>
+        <button class="abtn" onclick="openModal()">+ New</button>
+      </div>
+    </div>
+    <div class="tcard"><table class="mt"><thead><tr><th style="width:22%">Client</th><th style="width:22%">Modules</th><th style="width:16%">Specialist</th><th style="width:20%">Overall progress</th><th style="width:12%">Go-live</th><th style="width:8%">Status</th></tr></thead><tbody id="ob-tbody"></tbody></table></div>
+    <div id="detail-onboardings"></div>
+  </div>
+
+  <div class="page" id="page-capacity">
+    <div class="ph"><div class="ph-text"><h1>Capacity</h1><p>Workload, leave and assignment management</p></div><button class="abtn o" onclick="syncAsanaLeave()">&#127958; Sync leave</button></div>
+    <div class="two-col" style="margin-bottom:16px;">
+      <div class="tcard"><div class="thead-row"><h2>Workload overview</h2></div><div id="cap-list"></div></div>
+      <div class="tcard"><div class="thead-row"><h2>Reassign onboarding</h2></div>
+        <div style="padding:18px;">
+          <label style="font-size:12px;color:var(--muted);font-weight:500;display:block;margin-bottom:6px;">Onboarding</label>
+          <select id="a-ob" onchange="checkLeaveWarning()" style="width:100%;padding:9px 11px;border:0.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;background:#fafaf8;margin-bottom:14px;"><option value="">Choose a project...</option></select>
+          <label style="font-size:12px;color:var(--muted);font-weight:500;display:block;margin-bottom:6px;">Assign to</label>
+          <select id="a-spec" onchange="checkLeaveWarning()" style="width:100%;padding:9px 11px;border:0.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;background:#fafaf8;margin-bottom:8px;"><option value="">Select specialist...</option><option>Richard</option><option>Jordan</option><option>Florent</option><option>Unassigned</option></select>
+          <div class="leave-warning" id="assign-leave-warn"></div>
+          <button class="btn-p" style="width:100%;margin-top:12px;" onclick="doAssign()">Reassign &amp; sync to HubSpot</button>
+        </div>
+      </div>
+    </div>
+    <div class="tcard"><div class="thead-row"><h2>Specialist breakdown</h2></div><div style="padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="spec-bd"></div></div>
+  </div>
+
+  <div class="page" id="page-docs">
+    <div class="ph"><div class="ph-text"><h1>Documentation</h1><p>Process guides for all onboarding specialists</p></div></div>
+    <div class="doc-layout">
+      <div class="doc-sidebar">
+        <div class="dns">Getting started</div>
+        <div class="dni active" onclick="showDoc('ov',this)">Hub overview</div>
+        <div class="dni" onclick="showDoc('hs',this)">HubSpot sync</div>
+        <div class="dni" onclick="showDoc('roles',this)">Roles &amp; access</div>
+        <div class="dns">Process</div>
+        <div class="dni" onclick="showDoc('modules',this)">Module structure</div>
+        <div class="dni" onclick="showDoc('progress',this)">Progress tracking</div>
+        <div class="dns">Key notes</div>
+        <div class="dni" onclick="showDoc('kn',this)">Best practices</div>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div class="da active tcard" id="doc-ov" style="padding:24px;"><h1>Fore Group Onboarding Hub</h1><div class="dm"><span>Last updated: May 2026</span><span style="color:var(--fg);font-weight:500;">&#9679; Live</span></div><p>Single source of truth for all client onboardings. Deals flow in from HubSpot, each module is tracked independently with its own checklist, and Claude performs actions directly in Lightspeed.</p><h2>How it works</h2><div class="sb"><div class="sn">1</div><div><div class="st-t">Deal closes in HubSpot</div><div class="st-d">Closed-Won deals land in the Inbox with all deal data and line items automatically parsed into modules.</div></div></div><div class="sb"><div class="sn">2</div><div><div class="st-t">Tiaan reviews and assigns</div><div class="st-d">Review parsed modules, country flags and ecosystem support. Assign a specialist and approve to activate.</div></div></div><div class="sb"><div class="sn">3</div><div><div class="st-t">Specialist works module by module</div><div class="st-d">Step 0 always first, then each module in turn. Every module has its own checklist and progress bar.</div></div></div><div class="sb"><div class="sn">4</div><div><div class="st-t">Overall progress auto-calculates</div><div class="st-d">Weighted by task count across all modules. A 36-task Retail module has more weight than a 6-task Shogo module.</div></div></div></div>
+        <div class="da tcard" id="doc-hs" style="padding:24px;"><h1>HubSpot sync</h1><div class="dm"><span>Last updated: May 2026</span></div><h2>HubSpot to Hub (once on import)</h2><ul><li>Client name, Deal ID, Expected Go-Live Date, Start Date (from Onboarding Ticket), Country of Deal</li><li>Line items parsed to module tags automatically</li></ul><h2>Line item mapping</h2><div class="code-block">Lightspeed Golf &rarr; Golf<br>Lightspeed Retail (R) &rarr; Retail (R)<br>Lightspeed Restaurant K-Series &rarr; Restaurant (K)<br>Lightspeed Restaurant (L-Series) &rarr; Restaurant (L)<br>Lightspeed Accounting / Shogo &rarr; Accounting (Shogo)<br>Lightspeed eCommerce (E) &rarr; eCommerce<br>Custom App &rarr; Custom App<br>Booxi &rarr; Booxi<br>Fore Connect &rarr; Fore Connect<br>Ecosystem Support &rarr; info tag only</div><h2>Hub to HubSpot (live)</h2><ul><li>Specialist assignment &rarr; Ticket Owner</li><li>Go-live date change &rarr; Expected Go-Live Date on Deal</li></ul><div class="nb"><p>Go-live date is owned by the hub after import. Always change it here.</p></div></div>
+        <div class="da tcard" id="doc-roles" style="padding:24px;"><h1>Roles &amp; access</h1><div class="dm"><span>Last updated: May 2026</span></div><h2>Head of Onboarding &mdash; Tiaan</h2><ul><li>Full visibility of all onboardings</li><li>Reviews and approves deals from Inbox</li><li>Assigns specialists, manages capacity and leave</li><li>Access to Settings</li></ul><h2>Onboarding Specialists</h2><ul><li>Sees their own assigned onboardings by default</li><li>Works through module checklists and triggers Claude actions</li><li>Can add and edit notes</li></ul></div>
+        <div class="da tcard" id="doc-modules" style="padding:24px;"><h1>Module structure</h1><div class="dm"><span>Last updated: May 2026</span></div><p>Every onboarding starts with Step 0 (Deal Initiation), then the modules sold to the client. Each module has its own independent checklist and progress bar.</p><h2>Step 0 &mdash; Deal Initiation (always present, 3 tasks)</h2><ul><li>Send Welcome Email &amp; Organise Kick-Off Call</li><li>Create Asana project plan</li><li>Send Onboarding Questionnaire</li></ul><h2>Available modules</h2><ul><li><strong>Golf</strong> &mdash; 29 tasks</li><li><strong>Retail (R)</strong> &mdash; 36 tasks. Ireland: Item Fees flagged automatically</li><li><strong>Restaurant (L-Series)</strong> &mdash; 22 tasks</li><li><strong>Restaurant (K-Series)</strong> &mdash; 19 tasks</li><li><strong>Accounting (Shogo)</strong> &mdash; 6 tasks</li><li><strong>eCommerce (E-Series)</strong> &mdash; 14 tasks</li><li><strong>Custom App</strong> &mdash; 6 tasks</li><li><strong>Booxi</strong> &mdash; 19 tasks</li><li><strong>Fore Connect</strong> &mdash; 7 tasks (sold as line item only)</li></ul><div class="nb"><p>Ecosystem Support is not a module. It shows as an info badge on the deal card only.</p></div></div>
+        <div class="da tcard" id="doc-progress" style="padding:24px;"><h1>Progress tracking</h1><div class="dm"><span>Last updated: May 2026</span></div><h2>Per-module progress</h2><p>Each module shows its own progress bar: tasks completed &divide; total tasks in that module.</p><h2>Overall progress (weighted)</h2><p>Total completed tasks across all modules (incl. Step 0) &divide; total tasks across all modules. Modules with more tasks carry more weight.</p><div class="code-block">Example: Golf (29 tasks, 75% done) + Retail (36 tasks, 100% done)<br>Done = 22 + 36 = 58 &nbsp; Total = 29 + 36 = 65<br>Overall = 58/65 = 89%</div><h2>GO-LIVE tasks</h2><p>Each module ends with a GO-LIVE task highlighted in green. When all modules reach GO-LIVE, the client is ready for handover to support.</p></div>
+        <div class="da tcard" id="doc-kn" style="padding:24px;"><h1>Best practices</h1><div class="dm"><span>Last updated: May 2026</span></div><ul><li style="margin-bottom:10px;"><strong>Never assume</strong> &mdash; schedule a check-in rather than guessing</li><li style="margin-bottom:10px;"><strong>Go-live date</strong> &mdash; always change in the hub, never directly in HubSpot</li><li style="margin-bottom:10px;"><strong>Ireland clients</strong> &mdash; Item Fees in Retail are flagged automatically. Always confirm before enabling</li><li style="margin-bottom:10px;"><strong>Keep hub up to date</strong> &mdash; mark tasks done as soon as they're complete</li><li style="margin-bottom:10px;"><strong>Credentials in 1Password only</strong></li><li style="margin-bottom:10px;"><strong>Split training</strong> &mdash; Golf, Retail and F&amp;B separately; managers separate from staff</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-settings">
+    <div class="ph"><div class="ph-text"><h1>Settings</h1><p>Hub configuration &mdash; Head of Onboarding only</p></div></div>
+    <div class="settings-section"><h2>Asana leave sync</h2><p>Pulls leave dates from the <strong>Leave Planning</strong> project in Asana. Reads each specialist's "Leave Prep Checklist" task start and due dates and reflects them on the calendar, capacity view and assignment warnings.</p><button class="btn-p" onclick="syncAsanaLeave()">Sync leave from Asana</button></div>
+    <div class="settings-section"><h2>HubSpot connection</h2><p>Connects via Claude's MCP integration to pull Closed-Won deals and write back assignments and go-live date changes.</p><button class="btn-p" onclick="syncHubSpot()">Sync HubSpot now</button></div>
+    <div class="settings-section"><h2>Change team password</h2><p>Update the shared password. Tell the team the new password before saving.</p>
+      <div class="settings-field"><label>Current password</label><input type="password" id="pw-current" placeholder="Enter current password"/></div>
+      <div class="settings-field"><label>New password</label><input type="password" id="pw-new" placeholder="Choose a new password"/></div>
+      <div class="settings-field"><label>Confirm new password</label><input type="password" id="pw-confirm" placeholder="Confirm new password"/></div>
+      <div class="auth-error" id="pw-error" style="max-width:360px;margin-bottom:12px;"></div>
+      <button class="btn-p" onclick="changePassword()">Update password</button>
+    </div>
+    <div class="settings-section"><h2>Session</h2><p>You are currently signed in.</p><button class="btn-s" onclick="doLogout()">Sign out</button></div>
+    <div class="danger-zone"><h2>Reset all data</h2><p>Permanently deletes all onboardings, activity and settings. Cannot be undone.</p><button class="btn-danger" onclick="resetAll()">Reset all data</button></div>
+  </div>
+
+  <div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)"><div class="modal-inner" id="modal-inner"></div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+
+// MODULE DEFINITIONS
+const STEP0={id:'step0',label:'Deal Initiation',color:'#6b7060',bg:'#f0efe8',dot:'#c8c8b8',tasks:[
+  {id:'s0t1',title:'Send Welcome Email to Client & Organise Kick-Off Call with Sales',claude:false},
+  {id:'s0t2',title:'Create Asana project plan',claude:false},
+  {id:'s0t3',title:'Send Onboarding Questionnaire to client',claude:false},
+]};
+
+const MD={
+'Golf':{id:'golf',label:'Lightspeed Golf',color:'#3d6e10',bg:'#e8f4d8',dot:'#c5e89a',tasks:[
+  {id:'g1',title:'Provision Lightspeed Golf account',claude:true,ca:'Provision the Lightspeed Golf account'},
+  {id:'g2',title:'Create golf club',claude:true,ca:'Create the golf club in Lightspeed Golf'},
+  {id:'g3',title:'Create courses',claude:false},{id:'g4',title:'Create green fees',claude:false},
+  {id:'g5',title:'Create packages',claude:false},{id:'g6',title:'Create extras',claude:false},
+  {id:'g7',title:'Setup online booking section according to club policy',claude:false},
+  {id:'g8',title:'Setup tee sheet section according to club policy',claude:false},
+  {id:'g9',title:'Create player types',claude:false},{id:'g10',title:'Create memberships',claude:false},
+  {id:'g11',title:'Create services',claude:false},{id:'g12',title:'Create/Activate taxes',claude:false},
+  {id:'g13',title:'Activate integrators (if required)',claude:false},
+  {id:'g14',title:'Create and attach price sheets to relevant dates/season',claude:false},
+  {id:'g15',title:'Create tee times',claude:false},
+  {id:'g16',title:'Import membership database',claude:true,ca:'Import membership database into Lightspeed Golf'},
+  {id:'g17',title:"Add club T&Cs",claude:false},
+  {id:'g18',title:'Share booking widget URL and/or iFrame code with client',claude:false},
+  {id:'g19',title:'Send account activation email',claude:false},
+  {id:'g20',title:'Activate confirmation emails',claude:false},
+  {id:'g21',title:'Activate tee time freeze',claude:false},
+  {id:'g22',title:'Confirm marketing opt-in is enabled',claude:false},
+  {id:'g23',title:'Share member communication plan',claude:false},
+  {id:'g24',title:'Client to create employees and assign roles',claude:false},
+  {id:'g25',title:'Client to add Stripe details (if applicable) in Add-Ons',claude:false},
+  {id:'g26',title:'Client to create events (Golf Competitions)',claude:false},
+  {id:'g27',title:'Manager overview training',claude:false},
+  {id:'g28',title:'Front of house training',claude:false},
+  {id:'g29',title:'GO-LIVE',claude:false,isGoLive:true},
+]},
+'Retail (R)':{id:'retail_r',label:'Lightspeed Retail (R)',color:'#1e4d8c',bg:'#dbeafe',dot:'#a8ccf0',tasks:[
+  {id:'r1',title:'Provision Lightspeed Retail (R-Series) account',claude:true,ca:'Provision Lightspeed Retail R-Series account'},
+  {id:'r2',title:'Provision Lightspeed Payments (confirm rates are correct)',claude:false},
+  {id:'r3',title:'Activate Price & Discount Rules and Gift Cards V2',claude:false},
+  {id:'r4',title:'Request Lightspeed to add Gift Cards V2 and Price & Discount Rules',claude:false},
+  {id:'r5',title:'Configure locations',claude:true,ca:'Configure locations in Lightspeed Retail'},
+  {id:'r6',title:'Configure registers & locations',claude:false},
+  {id:'r7',title:"Sales Tax configured as 'Sales Tax'",claude:false},
+  {id:'r8',title:'Enable Zebra Browser Print',claude:false},
+  {id:'r9',title:'Configure general options',claude:true,ca:'Configure general options in Lightspeed Retail'},
+  {id:'r10',title:"Tax model set to 'Inclusive'",claude:false},
+  {id:'r11',title:'Set sign out delay & PIN delay',claude:false},
+  {id:'r12',title:'Require PIN before each sale',claude:false},
+  {id:'r13',title:"Cost method set to 'Average Cost'",claude:false},
+  {id:'r14',title:'Set currency (£ or €)',claude:false},{id:'r15',title:'Set email address',claude:false},
+  {id:'r16',title:"Cash drawer set to 'Cash'",claude:false},
+  {id:'r17',title:'Add logo in company branding section',claude:false},
+  {id:'r18',title:'Create payment types',claude:false},
+  {id:'r19',title:'Create tax classes and configure sales tax',claude:false},
+  {id:'r20',title:'Create price & discount rules',claude:false},
+  {id:'r21',title:'Item Fees setup [🇮🇪 IRELAND — confirm with client before enabling]',claude:false,irelandOnly:true},
+  {id:'r22',title:'Create custom menus',claude:false},
+  {id:'r23',title:'Import customers',claude:true,ca:'Import customers into Lightspeed Retail'},
+  {id:'r24',title:'Import customer balances / transfer customer credit accounts (Fore Connect)',claude:false},
+  {id:'r25',title:'Gift Cards (V2)',claude:false},{id:'r26',title:'Matrix attribute sets',claude:false},
+  {id:'r27',title:'Import inventory items',claude:true,ca:'Import inventory items into Lightspeed Retail'},
+  {id:'r28',title:'Include Online Pricing column (if using eCom)',claude:false},
+  {id:'r29',title:'Configure hardware (printers, cash drawers, scanners, label printers)',claude:false},
+  {id:'r30',title:'Map Point of Sale (Payment Types & Categories) in Lightspeed Golf',claude:false},
+  {id:'r31',title:'Sync products, customers and payment types in Admin section',claude:false},
+  {id:'r32',title:'Sync employees and add employee IDs between Golf & Retail',claude:false},
+  {id:'r33',title:'Client to create employees and assign roles',claude:false},
+  {id:'r34',title:'Manager overview training',claude:false},
+  {id:'r35',title:'Front of house training',claude:false},
+  {id:'r36',title:'GO-LIVE',claude:false,isGoLive:true},
+]},
+'Restaurant (L)':{id:'restaurant_l',label:'Restaurant (L-Series)',color:'#831843',bg:'#fdf2f8',dot:'#f9a8d4',tasks:[
+  {id:'rl1',title:'Provision Lightspeed Restaurant (L-Series) account',claude:true,ca:'Provision Lightspeed Restaurant L-Series account'},
+  {id:'rl2',title:'Configure company settings',claude:false},{id:'rl3',title:'Configure report settings',claude:false},
+  {id:'rl4',title:'Configure print settings',claude:false},{id:'rl5',title:'Configure app settings',claude:false},
+  {id:'rl6',title:'Create payment types',claude:false},
+  {id:'rl7',title:'Add devices (iPads) by signing in with main admin details',claude:false},
+  {id:'rl8',title:'Configure restaurant app settings',claude:false},{id:'rl9',title:'Add printers',claude:false},
+  {id:'rl10',title:'Create printer templates and assign to relevant printers',claude:false},
+  {id:'rl11',title:'Create receipt design',claude:false},{id:'rl12',title:'Create cash drawers',claude:false},
+  {id:'rl13',title:'Link printer templates with relevant food/drink category',claude:false},
+  {id:'rl14',title:'Create floor plan/s',claude:false},{id:'rl15',title:'Create categories',claude:false},
+  {id:'rl16',title:'Create products',claude:false},{id:'rl17',title:'Create modifiers',claude:false},
+  {id:'rl18',title:'Create menus',claude:false},
+  {id:'rl19',title:'Client to create users and assign user groups',claude:false},
+  {id:'rl20',title:'Manager overview training',claude:false},{id:'rl21',title:'Front of house training',claude:false},
+  {id:'rl22',title:'GO-LIVE',claude:false,isGoLive:true},
+]},
+'Restaurant (K)':{id:'restaurant_k',label:'Restaurant (K-Series)',color:'#8c3a10',bg:'#fce8d8',dot:'#f0bea0',tasks:[
+  {id:'rk1',title:'Provision Lightspeed Restaurant (K-Series) account',claude:true,ca:'Provision Lightspeed Restaurant K-Series account'},
+  {id:'rk2',title:'Activate setup guide',claude:false},{id:'rk3',title:'Configure business settings',claude:false},
+  {id:'rk4',title:'Import accounting groups and items',claude:false},
+  {id:'rk5',title:'Create production instructions',claude:false},{id:'rk6',title:'Create menus',claude:false},
+  {id:'rk7',title:'Create floor plans',claude:false},{id:'rk8',title:'Create payment types',claude:false},
+  {id:'rk9',title:'Create discounts',claude:false},{id:'rk10',title:'Create production centers',claude:false},
+  {id:'rk11',title:'Add printing profiles',claude:false},{id:'rk12',title:'Modify receipt template',claude:false},
+  {id:'rk13',title:'Add printers',claude:false},
+  {id:'rk14',title:'Create connection code to add more devices (iPads)',claude:false},
+  {id:'rk15',title:'Client to create users and assign user groups',claude:false},
+  {id:'rk16',title:'Manager overview training',claude:false},{id:'rk17',title:'Front of house training',claude:false},
+  {id:'rk18',title:'Activate production mode',claude:false},
+  {id:'rk19',title:'GO-LIVE',claude:false,isGoLive:true},
+]},
+'Accounting (Shogo)':{id:'shogo',label:'Accounting (Shogo)',color:'#166534',bg:'#f0fdf4',dot:'#bbf7d0',tasks:[
+  {id:'sh1',title:'Provision Lightspeed Accounting (Shogo)',claude:false},
+  {id:'sh2',title:'Create stores in Shogo',claude:false},
+  {id:'sh3',title:'Share login details with client',claude:false},
+  {id:'sh4',title:'Inform client of mapping procedure',claude:false},
+  {id:'sh5',title:'Ensure Sales Posting Method is correct',claude:false},
+  {id:'sh6',title:'Confirm accounting has been activated',claude:false},
+]},
+'eCommerce':{id:'ecom',label:'eCommerce (E-Series)',color:'#7c3aed',bg:'#ede9fe',dot:'#c4b5fd',tasks:[
+  {id:'ec1',title:'Provision Lightspeed eCommerce (E-Series)',claude:false},
+  {id:'ec2',title:'Complete registration of eCom site',claude:false},
+  {id:'ec3',title:'Set main location of eCommerce site',claude:false},
+  {id:'ec4',title:'Add Payment Gateways',claude:false},
+  {id:'ec5',title:'If using LS Payments — confirm rates and activate in eCom',claude:false},
+  {id:'ec6',title:'Configure Shipping & Delivery',claude:false},
+  {id:'ec7',title:'Configure General Settings',claude:false},{id:'ec8',title:'Set Taxes',claude:false},
+  {id:'ec9',title:'Enable Customer Consent Requirements (Settings > Legal)',claude:false},
+  {id:'ec10',title:'Activate Gift Cards (Catalog > Gift Cards)',claude:false},
+  {id:'ec11',title:'Design Website',claude:false},
+  {id:'ec12',title:'Add Category images in Catalog > Categories',claude:false},
+  {id:'ec13',title:'Enable products for sale online',claude:false},
+  {id:'ec14',title:'Finalise Domain Change',claude:false},
+]},
+'Custom App':{id:'custom_app',label:'Custom App',color:'#6b21a8',bg:'#faf5ff',dot:'#e9d5ff',tasks:[
+  {id:'ca1',title:'Share custom app form with client',claude:false},
+  {id:'ca2',title:'Client to submit custom app form',claude:false},
+  {id:'ca3',title:'Client to review app and submit changes if required',claude:false},
+  {id:'ca4',title:'Client to agree to app preview',claude:false},
+  {id:'ca5',title:'Add custom buttons (if required)',claude:false},
+  {id:'ca6',title:'GO-LIVE',claude:false,isGoLive:true},
+]},
+'Booxi':{id:'booxi',label:'Booxi',color:'#0e7490',bg:'#ecfeff',dot:'#a5f3fc',tasks:[
+  {id:'bx1',title:'Sign up and register for Booxi free trial using support login in 1Password',claude:false},
+  {id:'bx2',title:'Configure the business details section',claude:false},
+  {id:'bx3',title:'Set the business open hours',claude:false},
+  {id:'bx4',title:'Configure the booking rules',claude:false},
+  {id:'bx5',title:'Activate Lightspeed Retail and Stripe integrations (if required)',claude:false},
+  {id:'bx6',title:'Add Fore Group card details to subscription and billing section',claude:false},
+  {id:'bx7',title:'Create categories',claude:false},{id:'bx8',title:'Create services',claude:false},
+  {id:'bx9',title:'Configure booking rules for each service (if required)',claude:false},
+  {id:'bx10',title:'Client to create each personnel',claude:false},
+  {id:'bx11',title:'Invite personnel to Booxi to activate account (valid email required)',claude:false},
+  {id:'bx12',title:'Add relevant services to each individual',claude:false},
+  {id:'bx13',title:'Each individual to create their own work schedule',claude:false},
+  {id:'bx14',title:'Configure booking rules per individual',claude:false},
+  {id:'bx15',title:'Assign the relevant role',claude:false},
+  {id:'bx16',title:'Share booking URL/s with client',claude:false},
+  {id:'bx17',title:'Manager overview training',claude:false},{id:'bx18',title:'Front of house training',claude:false},
+  {id:'bx19',title:'GO-LIVE',claude:false,isGoLive:true},
+]},
+'Fore Connect':{id:'fore_connect',label:'Fore Connect',color:'#1a1f16',bg:'#e8f4d8',dot:'#8DC63F',tasks:[
+  {id:'fc1',title:'Create new client in Fore Connect',claude:false},
+  {id:'fc2',title:'Create new Retail connection',claude:false},
+  {id:'fc3',title:'Create new Golf connection',claude:false},
+  {id:'fc4',title:'Integrations > Supplier Master Database (TGI)',claude:false},
+  {id:'fc5',title:'Provide access to Extension',claude:false},
+  {id:'fc6',title:'HubSpot (Extension)',claude:false},
+  {id:'fc7',title:'Share ForeConnect setup guide with client',claude:false},
+]},
+};
+
+const HS_MAP={'lightspeed golf':'Golf','lightspeed retail (r)':'Retail (R)','lightspeed retail (r-series)':'Retail (R)','lightspeed retail r-series':'Retail (R)','lightspeed restaurant k-series':'Restaurant (K)','lightspeed restaurant (k)':'Restaurant (K)','lightspeed restaurant (k-series)':'Restaurant (K)','lightspeed restaurant (l)':'Restaurant (L)','lightspeed restaurant (l-series)':'Restaurant (L)','lightspeed restaurant l-series':'Restaurant (L)','lightspeed accounting (shogo)':'Accounting (Shogo)','lightspeed accounting':'Accounting (Shogo)','shogo (lightspeed accounting)':'Accounting (Shogo)','shogo':'Accounting (Shogo)','lightspeed ecommerce (e)':'eCommerce','lightspeed ecommerce (e-series)':'eCommerce','lightspeed ecommerce':'eCommerce','custom app':'Custom App','booxi':'Booxi','fore connect':'Fore Connect','foreconnect':'Fore Connect','ecosystem support':'__ECO__'};
+
+function parseItems(items){const f=[];items.forEach(i=>{const k=i.toLowerCase().replace(/\s*x\s*\d+\s*$/,'').trim();for(const[p,v]of Object.entries(HS_MAP)){if(k.includes(p)&&v!=='__ECO__'){if(!f.includes(v))f.push(v);break;}}});return f;}
+function hasEco(items){return items.some(i=>i.toLowerCase().includes('ecosystem support'));}
+
+function buildCL(prods){const cl={};STEP0.tasks.forEach(t=>{cl[t.id]=false;});prods.forEach(p=>{const m=MD[p];if(m)m.tasks.forEach(t=>{cl[t.id]=false;});});return cl;}
+
+function calcProg(ob){let tot=0,don=0;const pm={};
+  const s0d=STEP0.tasks.filter(t=>ob.cl[t.id]).length;
+  pm.step0={done:s0d,total:STEP0.tasks.length,pct:Math.round(s0d/STEP0.tasks.length*100)};
+  tot+=STEP0.tasks.length;don+=s0d;
+  ob.products.forEach(p=>{const m=MD[p];if(!m)return;const d=m.tasks.filter(t=>ob.cl[t.id]).length;pm[p]={done:d,total:m.tasks.length,pct:Math.round(d/m.tasks.length*100)};tot+=m.tasks.length;don+=d;});
+  return{overall:tot>0?Math.round(don/tot*100):0,pm,tot,don};}
+
+const SPC={Richard:'sr',Jordan:'sj',Florent:'sf',Tiaan:'st',Unassigned:'st'};
+const SPI={Richard:'R',Jordan:'J',Florent:'F',Tiaan:'T',Unassigned:'?'};
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DOWS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+let role='head',user='Tiaan',obs=[],acts=[],pending=[],leaveData=[];
+let openObId=null,openDetPage=null,calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
+let activePopover=null,openMods={};
+
+// AUTH
+function hashPw(pw){let h=0;const s='fg-2026-'+pw;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return h.toString(36);}
+function getHash(){return localStorage.getItem('fg-pw-hash');}
+function isLoggedIn(){return sessionStorage.getItem('fg-session')==='active';}
+function boot(){const hash=getHash();if(!hash){document.getElementById('screen-setup').style.display='flex';}else if(isLoggedIn()){showApp();}else{document.getElementById('screen-login').style.display='flex';setTimeout(()=>document.getElementById('login-pw').focus(),100);}}
+function completeSetup(){const p1=document.getElementById('setup-pw1').value,p2=document.getElementById('setup-pw2').value,err=document.getElementById('setup-error');if(p1.length<6){err.textContent='Password must be at least 6 characters.';err.classList.add('show');return;}if(p1!==p2){err.textContent='Passwords do not match.';err.classList.add('show');return;}localStorage.setItem('fg-pw-hash',hashPw(p1));sessionStorage.setItem('fg-session','active');document.getElementById('screen-setup').style.display='none';showApp();}
+function doLogin(){const pw=document.getElementById('login-pw').value,err=document.getElementById('login-error');if(hashPw(pw)===getHash()){sessionStorage.setItem('fg-session','active');document.getElementById('screen-login').style.display='none';showApp();}else{err.classList.add('show');document.getElementById('login-pw').value='';document.getElementById('login-pw').focus();}}
+function doLogout(){sessionStorage.removeItem('fg-session');location.reload();}
+function changePassword(){const cur=document.getElementById('pw-current').value,nw=document.getElementById('pw-new').value,conf=document.getElementById('pw-confirm').value,err=document.getElementById('pw-error');err.classList.remove('show');if(hashPw(cur)!==getHash()){err.textContent='Current password incorrect.';err.classList.add('show');return;}if(nw.length<6){err.textContent='New password must be at least 6 characters.';err.classList.add('show');return;}if(nw!==conf){err.textContent='Passwords do not match.';err.classList.add('show');return;}localStorage.setItem('fg-pw-hash',hashPw(nw));document.getElementById('pw-current').value='';document.getElementById('pw-new').value='';document.getElementById('pw-confirm').value='';showToast('Password updated');}
+function resetAll(){if(!confirm('Permanently delete all data?'))return;localStorage.clear();sessionStorage.clear();location.reload();}
+function showApp(){loadData();document.getElementById('app-shell').classList.add('visible');}
+
+// DATA
+function save(){try{localStorage.setItem('fg-obs',JSON.stringify(obs));localStorage.setItem('fg-acts',JSON.stringify(acts));localStorage.setItem('fg-pend',JSON.stringify(pending));localStorage.setItem('fg-leave',JSON.stringify(leaveData));}catch(e){}}
+function loadData(){try{const o=localStorage.getItem('fg-obs');if(o)obs=JSON.parse(o);}catch(e){}try{const a=localStorage.getItem('fg-acts');if(a)acts=JSON.parse(a);}catch(e){}try{const p=localStorage.getItem('fg-pend');if(p)pending=JSON.parse(p);}catch(e){}try{const l=localStorage.getItem('fg-leave');if(l)leaveData=JSON.parse(l);}catch(e){}if(!obs.length)seedData();render();}
+function seedData(){
+  const fmt=d=>d.toISOString().split('T')[0];const add=n=>{const d=new Date();d.setDate(d.getDate()+n);return fmt(d);};
+  obs=[
+    {id:'ob1',name:'Fancourt Golf Club',products:['Golf','Retail (R)'],spec:'Richard',status:'Active',deal:'10780021687',hsTicketId:'tick001',country:'ZA',eco:true,notes:'Handover done. Client responsive.',started:add(-20),golive:add(15),fromHS:true,cl:buildCL(['Golf','Retail (R)'])},
+    {id:'ob2',name:'Scotland Links',products:['Golf','Retail (R)','Restaurant (K)'],spec:'Jordan',status:'Active',deal:'10780021688',hsTicketId:'tick002',country:'GB',eco:false,notes:'K-Series. Waiting on questionnaire.',started:add(-13),golive:add(36),fromHS:true,cl:buildCL(['Golf','Retail (R)','Restaurant (K)'])},
+    {id:'ob3',name:'Els Club Copperleaf',products:['Golf'],spec:'Florent',status:'Blocked',deal:'10780021689',hsTicketId:'tick003',country:'ZA',eco:true,notes:'Waiting for credentials.',started:add(-7),golive:add(25),fromHS:true,cl:buildCL(['Golf'])},
+    {id:'ob4',name:'Galway Golf Club',products:['Golf','Retail (R)','eCommerce'],spec:'Richard',status:'Active',deal:'10780021691',hsTicketId:'tick005',country:'IE',eco:false,notes:'Ireland client. Item Fees flagged.',started:add(-5),golive:add(45),fromHS:true,cl:buildCL(['Golf','Retail (R)','eCommerce'])},
+  ];
+  // Seed some progress
+  ['s0t1','s0t2','g1','g2','g3','r1','r2'].forEach(id=>{if(obs[0].cl[id]!==undefined)obs[0].cl[id]=true;});
+  ['s0t1','g1','r1','rk1'].forEach(id=>{if(obs[1].cl[id]!==undefined)obs[1].cl[id]=true;});
+  ['s0t1'].forEach(id=>{if(obs[2].cl[id]!==undefined)obs[2].cl[id]=true;});
+  acts=[{text:"Richard provisioned Fancourt Golf Club accounts",time:'2h ago',color:'#8DC63F',unread:true},{text:'Jordan started Scotland Links onboarding',time:'5h ago',color:'#60a0e0',unread:true},{text:'Florent flagged Els Club Copperleaf as Blocked',time:'Yesterday',color:'#e24b4a',unread:false}];
+  const add2=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().split('T')[0];};
+  leaveData=[{name:'Richard',start:add2(12),end:add2(19),taskName:"Richard's Leave Prep Checklist"},{name:'Jordan',start:add2(35),end:add2(42),taskName:"Jordan's Leave Prep Checklist"}];
+  save();}
+
+// LEAVE
+function isOnLeave(n,date){const d=date?new Date(date+'T00:00:00'):new Date();return leaveData.some(l=>{if(l.name.toLowerCase()!==n.toLowerCase())return false;return d>=new Date(l.start+'T00:00:00')&&d<=new Date(l.end+'T00:00:00');});}
+function getUpcomingLeave(n,days=60){const now=new Date(),cut=new Date();cut.setDate(cut.getDate()+days);return leaveData.filter(l=>{if(l.name.toLowerCase()!==n.toLowerCase())return false;const s=new Date(l.start+'T00:00:00');return s>=now&&s<=cut;});}
+function leaveOverlaps(n,s,e){if(!s)return false;const sd=new Date(s+'T00:00:00'),ed=e?new Date(e+'T00:00:00'):sd;return leaveData.some(l=>{if(l.name.toLowerCase()!==n.toLowerCase())return false;const ls=new Date(l.start+'T00:00:00'),le=new Date(l.end+'T00:00:00');return sd<=le&&ed>=ls;});}
+function fmtLeave(l){const s=new Date(l.start+'T00:00:00'),e=new Date(l.end+'T00:00:00'),o={day:'numeric',month:'short'};return l.start===l.end?s.toLocaleDateString('en-GB',o):s.toLocaleDateString('en-GB',o)+' \u2013 '+e.toLocaleDateString('en-GB',o);}
+
+async function syncAsanaLeave(){
+  // PRODUCTION: uncomment and activate when Asana MCP connected
+  // const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:'Find Asana project "Leave Planning". Return all tasks as JSON: [{taskName,assigneeName,startDate,dueDate}]. JSON only.'}],mcp_servers:[{type:'url',url:'https://mcp.asana.com/sse',name:'asana'}]})});
+  // const data=await res.json();
+  // const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+  // const tasks=JSON.parse(text.replace(/```json|```/g,'').trim());
+  // leaveData=tasks.map(t=>({name:t.assigneeName||t.taskName.match(/^([A-Za-z]+)'s/)?.[1]||'',start:t.startDate,end:t.dueDate,taskName:t.taskName})).filter(l=>l.start&&l.end&&l.name);
+  // save(); render();
+  showToast('Asana MCP not yet connected \u2014 demo leave data active');render();}
+
+async function syncHubSpot(){
+  setSS('syncing','Syncing...');await new Promise(r=>setTimeout(r,1200));
+  if(!pending.find(p=>p.dealId==='HS-DEMO-001')){
+    pending.push({id:'pend-'+Date.now(),dealId:'HS-DEMO-001',hsTicketId:'TICKET-DEMO-001',name:'Royal Johannesburg Golf Club',rawLineItems:['Lightspeed Golf x 1','Lightspeed Retail (R) x 1','Ecosystem Support x 1'],products:parseItems(['Lightspeed Golf x 1','Lightspeed Retail (R) x 1']),eco:true,country:'ZA',started:new Date().toISOString().split('T')[0],golive:'2026-07-15',pulledAt:new Date().toISOString(),spec:'Unassigned'});
+    addAct('New deal from HubSpot: Royal Johannesburg Golf Club','#ff7a59');save();}
+  setSS('ok','Synced');render();showToast('HubSpot sync complete');}
+function setSS(s,l){const dot=document.getElementById('sync-dot'),lbl=document.getElementById('sync-label');dot.className='sync-dot'+(s==='syncing'?' syncing':s==='ok'?' ok':s==='err'?' err':'');lbl.textContent=l;}
+async function writeHSTick(tid,spec){console.log('[HubSpot] Ticket '+tid+' owner -> '+spec);}
+async function writeHSGL(did,date){console.log('[HubSpot] Deal '+did+' go-live -> '+date);}
+
+// HELPERS
+function sBadge(s){const cls={Active:'ba',Pending:'bpen',Complete:'bc',Blocked:'bb'}[s]||'bpen';return '<span class="badge '+cls+'">'+s+'</span>';}
+function specPill(n){const lv=isOnLeave(n);const lb=lv?' <span class="leave-badge">&#127958; On leave</span>':'';return '<span class="spec"><span class="sav '+(SPC[n]||'st')+'">'+SPI[n]+'</span>'+n+lb+'</span>';}
+function gFmt(d){if(!d)return '<span class="glive">\u2014</span>';const dt=new Date(d+'T00:00:00'),now=new Date(),diff=Math.ceil((dt-now)/864e5);const s=dt.toLocaleDateString('en-GB',{day:'numeric',month:'short'});if(diff<0)return '<span class="glive overdue">'+s+' (overdue)</span>';if(diff<=14)return '<span class="glive soon">'+s+' ('+diff+'d)</span>';return '<span class="glive">'+s+'</span>';}
+function oPBar(ob){const{overall}=calcProg(ob);const col=overall===100?'#3d7a12':overall>=50?'#8DC63F':'#f0c040';return '<div class="prog"><div class="prog-bar"><div class="prog-fill" style="width:'+overall+'%;background:'+col+';"></div></div><div class="prog-pct">'+overall+'%</div></div>';}
+function modPills(ob){const n=ob.products.length;if(!n)return '<span style="font-size:12px;color:var(--muted);">\u2014</span>';if(n<=2)return ob.products.map(p=>{const m=MD[p];if(!m)return'';return '<span class="pp" style="background:'+m.bg+';color:'+m.color+';border-color:'+m.dot+';">'+m.label+'</span>';}).join('');return '<span class="pp clickable" style="background:#f0eeff;color:#4c2d8c;border-color:#c8b8f0;" onclick="togglePop(event,\''+ob.id+'\')">'+n+' modules &#9662;<div class="popover" id="pop-'+ob.id+'">'+ob.products.map(p=>{const m=MD[p];if(!m)return'';return '<div class="pop-item"><div class="pop-dot" style="background:'+m.dot+'"></div>'+m.label+'</div>';}).join('')+'</div></span>';}
+function togglePop(e,id){e.stopPropagation();const pop=document.getElementById('pop-'+id);if(!pop)return;if(activePopover&&activePopover!==pop)activePopover.classList.remove('open');pop.classList.toggle('open');activePopover=pop.classList.contains('open')?pop:null;}
+document.addEventListener('click',()=>{if(activePopover){activePopover.classList.remove('open');activePopover=null;}});
+
+// RENDER
+function render(){rDash();rObTable();rInbox();rCap();rNotifs();rAssignSel();rCal();}
+
+function buildRows(list){if(!list.length)return '<tr><td colspan="6" style="padding:36px;text-align:center;color:var(--muted);font-size:13px;">No onboardings found</td></tr>';return list.map(ob=>'<tr onclick="openDet(\''+ob.id+'\')"><td><strong>'+ob.name+'</strong>'+(ob.eco?' <span class="badge" style="background:#f0fdf4;color:#166534;font-size:10px;">Ecosystem</span>':'')+'</td><td>'+modPills(ob)+'</td><td>'+specPill(ob.spec)+'</td><td>'+oPBar(ob)+'</td><td>'+gFmt(ob.golive)+'</td><td>'+sBadge(ob.status)+'</td></tr>').join('');}
+
+function rDash(){const list=role==='spec'?obs.filter(o=>o.spec===user&&o.status!=='Complete'):obs.filter(o=>o.status!=='Complete');document.getElementById('dash-tbody').innerHTML=buildRows(list);const ac=obs.filter(o=>o.status==='Active');document.getElementById('st-act').textContent=ac.length;document.getElementById('st-pend').textContent=pending.length;document.getElementById('st-blk').textContent=obs.filter(o=>o.status==='Blocked').length;const avg=ac.length?Math.round(ac.reduce((s,o)=>s+calcProg(o).overall,0)/ac.length):0;document.getElementById('st-avg').textContent=avg+'%';}
+
+function rObTable(){const fs=document.getElementById('f-status').value,fm=document.getElementById('f-mod').value;let list=role==='spec'?obs.filter(o=>o.spec===user):[...obs];if(fs)list=list.filter(o=>o.status===fs);if(fm)list=list.filter(o=>o.products.includes(fm));document.getElementById('ob-tbody').innerHTML=buildRows(list);document.getElementById('ob-sub').textContent=list.length+' client'+(list.length!==1?'s':'')+' shown';}
+
+function rInbox(){const tab=document.getElementById('tab-inbox');tab.innerHTML=pending.length?'Inbox <span class="tab-dot"></span>':'Inbox';const el=document.getElementById('inbox-content');if(!pending.length){el.innerHTML='<div class="tcard" style="padding:48px;text-align:center;color:var(--muted);font-size:13px;"><div style="font-size:28px;margin-bottom:10px;">\u2713</div><div style="font-weight:500;color:var(--text);margin-bottom:4px;">Inbox clear</div>No new deals waiting.</div>';return;}el.innerHTML='<div class="inbox-wrap"><div class="inbox-head"><h2>Pending review <span class="inbox-badge">'+pending.length+'</span></h2></div>'+pending.map(buildPI).join('')+'</div>';}
+function buildPI(p){const prods=p.products.map(pr=>{const m=MD[pr];if(!m)return'';return '<span class="pp" style="background:'+m.bg+';color:'+m.color+';border-color:'+m.dot+';">'+m.label+'</span>';}).join('');const so=['Unassigned','Richard','Jordan','Florent'].map(s=>'<option value="'+s+'" '+(p.spec===s?'selected':'')+'>'+s+'</option>').join('');return '<div class="pending-item"><div><div class="pi-name">'+p.name+(p.eco?' <span class="badge" style="background:#f0fdf4;color:#166534;font-size:10px;">Ecosystem</span>':'')+(p.country==='IE'?' <span class="badge" style="background:#fef3d0;color:#7a5010;font-size:10px;">&#127470;&#127466; Ireland</span>':'')+'</div><div class="pi-meta"><span>&#128197; Start: '+(p.started||'\u2014')+'</span><span>&#127919; Go-live: '+(p.golive||'\u2014')+'</span><span>&#128279; Deal: '+p.dealId+'</span></div><div style="margin-bottom:6px;">'+prods+'</div><div style="font-size:11px;color:var(--muted);">Raw: '+p.rawLineItems.join(', ')+'</div><div style="font-size:11px;color:#ff7a59;margin-top:4px;display:flex;align-items:center;gap:4px;"><div class="hs-dot"></div>Pulled '+new Date(p.pulledAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</div></div><div class="pi-actions"><select id="spec-'+p.id+'" style="padding:7px 10px;border:0.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:12px;background:#fafaf8;">'+so+'</select><button class="btn-approve" onclick="approvePend(\''+p.id+'\')">Approve &amp; activate</button><button class="btn-dismiss" onclick="dismissPend(\''+p.id+'\')">Dismiss</button></div></div>';}
+function approvePend(pid){const p=pending.find(x=>x.id===pid);if(!p)return;const spec=document.getElementById('spec-'+pid)?.value||'Unassigned';const ob={id:'ob'+Date.now(),name:p.name,products:p.products,spec,status:'Active',deal:p.dealId,hsTicketId:p.hsTicketId,country:p.country||'',eco:p.eco||false,notes:'',started:p.started||new Date().toISOString().split('T')[0],golive:p.golive||'',fromHS:true,cl:buildCL(p.products)};obs.push(ob);pending=pending.filter(x=>x.id!==pid);addAct('Tiaan approved '+ob.name+' \u2192 '+spec,'#8DC63F');writeHSTick(ob.hsTicketId,spec);save();rInbox();rDash();render();showToast(ob.name+' activated \u2014 assigned to '+spec);}
+function dismissPend(pid){const p=pending.find(x=>x.id===pid);if(!p||!confirm('Dismiss '+p.name+'?'))return;pending=pending.filter(x=>x.id!==pid);save();rInbox();rDash();showToast('Deal dismissed');}
+
+function rNotifs(){const u=acts.filter(a=>a.unread).length;document.getElementById('ndot').classList.toggle('hidden',u===0);document.getElementById('nlist').innerHTML=acts.slice(0,8).map(a=>'<div class="notif-item"><div class="ni-dot" style="background:'+a.color+'"></div><div><div class="ni-text" style="'+(a.unread?'font-weight:500;':'')+'">'+a.text+'</div><div class="ni-time">'+a.time+'</div></div></div>').join('')||'<div class="notif-empty">No recent activity</div>';}
+function toggleNotif(e){e.stopPropagation();document.getElementById('npanel').classList.toggle('open');}
+function clearNotifs(){acts.forEach(a=>a.unread=false);save();rNotifs();document.getElementById('npanel').classList.remove('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.notif-wrap'))document.getElementById('npanel').classList.remove('open');});
+
+function rCap(){const specs=['Richard','Jordan','Florent'];document.getElementById('cap-list').innerHTML=specs.map(s=>{const ac=obs.filter(o=>o.spec===s&&o.status!=='Complete').length;const p=Math.min(ac/5*100,100);const onL=isOnLeave(s);const up=getUpcomingLeave(s);const col=onL?'#e24b4a':ac>=4?'#e24b4a':ac>=3?'#e09020':ac>0?'#8DC63F':'#d0d0c8';const li=onL?'<span class="leave-badge">On leave</span>':up.length?'<span style="font-size:10px;color:#8b2020;">&#127958; '+fmtLeave(up[0])+'</span>':'';return '<div class="cap-row'+(onL?' on-leave-row':'')+'"><div style="min-width:80px;">'+specPill(s)+'</div><div class="cap-bar-wrap"><div class="cap-fill" style="width:'+p+'%;background:'+col+';"></div></div><div style="font-size:12px;color:var(--muted);min-width:50px;text-align:right;font-family:var(--mono);">'+ac+' active</div>'+(li?'<div style="margin-left:8px;">'+li+'</div>':'')+'</div>';}).join('');document.getElementById('spec-bd').innerHTML=specs.map(s=>{const so=obs.filter(o=>o.spec===s);return '<div class="tcard" style="padding:14px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span class="sav '+(SPC[s]||'st')+'" style="width:28px;height:28px;font-size:12px;">'+SPI[s]+'</span><strong>'+s+'</strong></div>'+so.map(o=>'<div style="font-size:12px;padding:5px 0;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:6px;"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+o.name+'</span>'+sBadge(o.status)+'</div>').join('')+(!so.length?'<div style="font-size:12px;color:var(--muted);padding:4px 0;">No assignments</div>':'')+'</div>';}).join('');}
+
+function rAssignSel(){const sel=document.getElementById('a-ob'),cur=sel.value;sel.innerHTML='<option value="">Choose a project...</option>'+obs.filter(o=>o.status!=='Complete').map(o=>'<option value="'+o.id+'">'+o.name+'</option>').join('');if(cur)sel.value=cur;}
+
+function checkLeaveWarning(){const obId=document.getElementById('a-ob').value,spec=document.getElementById('a-spec').value,warn=document.getElementById('assign-leave-warn');if(!warn||!obId||!spec||spec==='Unassigned'){if(warn)warn.classList.remove('show');return;}const ob=obs.find(o=>o.id===obId);if(!ob){warn.classList.remove('show');return;}if(leaveOverlaps(spec,ob.started,ob.golive)){const ls=leaveData.filter(l=>l.name.toLowerCase()===spec.toLowerCase());warn.innerHTML='<strong>\u26a0\ufe0f Leave conflict:</strong> '+spec+' is on leave '+ls.map(fmtLeave).join(', ')+', overlapping this onboarding period. You can still assign.';warn.classList.add('show');}else warn.classList.remove('show');}
+
+function doAssign(){const obId=document.getElementById('a-ob').value,spec=document.getElementById('a-spec').value;if(!obId||!spec){showToast('Select both a project and specialist');return;}const ob=obs.find(o=>o.id===obId);if(ob){ob.spec=spec;addAct('Tiaan assigned '+ob.name+' to '+spec,'#a060e0');if(ob.hsTicketId)writeHSTick(ob.hsTicketId,spec);save();render();showToast('Assigned to '+spec+' \u2014 syncing to HubSpot');}}
+
+function rCal(){document.getElementById('cal-dow').innerHTML=DOWS.map(d=>'<div class="cal-dow">'+d+'</div>').join('');document.getElementById('cal-lbl').textContent=MONTHS[calMonth]+' '+calYear;const first=new Date(calYear,calMonth,1).getDay(),dim=new Date(calYear,calMonth+1,0).getDate(),dipm=new Date(calYear,calMonth,0).getDate();const today=new Date(),evts={};leaveData.forEach(l=>{if(!l.start||!l.end)return;const s=new Date(l.start+'T00:00:00'),e=new Date(l.end+'T00:00:00'),cur=new Date(s);while(cur<=e){const dk=cur.toISOString().split('T')[0];if(!evts[dk])evts[dk]=[];if(!evts[dk].find(x=>x.type==='leave'&&x.name===l.name))evts[dk].push({type:'leave',name:l.name});cur.setDate(cur.getDate()+1);}});[...obs,...pending].forEach(o=>{if(o.started){if(!evts[o.started])evts[o.started]=[];evts[o.started].push({type:'start',name:o.name});}if(o.golive){if(!evts[o.golive])evts[o.golive]=[];evts[o.golive].push({type:'golive',name:o.name});}});const tot=Math.ceil((first+dim)/7)*7;let html='';for(let i=0;i<tot;i++){let day,mo=calMonth,yr=calYear,other=false;if(i<first){day=dipm-(first-1-i);mo=calMonth-1;if(mo<0){mo=11;yr--;}other=true;}else if(i>=first+dim){day=i-first-dim+1;mo=calMonth+1;if(mo>11){mo=0;yr++;}other=true;}else day=i-first+1;const isToday=!other&&day===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear();const dk=yr+'-'+String(mo+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');const de=evts[dk]||[];const lv=[...new Set(de.filter(x=>x.type==='leave').map(x=>x.name))];const nl=de.filter(x=>x.type!=='leave');html+='<div class="cal-day'+(other?' other-month':'')+(isToday?' today':'')+'"><div class="day-num">'+day+'</div>'+lv.map(n=>'<div class="cal-event leave">&#127958; '+n+'</div>').join('')+nl.map(ev=>'<div class="cal-event '+ev.type+'">'+ev.name.split(' ')[0]+(ev.type==='golive'?' \u2605':'')+'</div>').join('')+'</div>';}document.getElementById('cal-grid').innerHTML=html;}
+function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}rCal();}
+function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}rCal();}
+
+// DETAIL
+function openDet(id){
+  openObId=id;openDetPage=document.querySelector('.page.active').id.replace('page-','');
+  const ob=obs.find(o=>o.id===id);if(!ob)return;
+  const canEdit=role==='head'||ob.spec===user,prog=calcProg(ob),isIE=ob.country==='IE';
+  let mods='';
+  mods+=buildMod('step0',STEP0,ob,prog,canEdit,isIE);
+  ob.products.forEach(p=>{const m=MD[p];if(m)mods+=buildMod(p,m,ob,prog,canEdit,isIE);});
+  const html='<div class="detail-panel"><div class="dp-head"><div><h2 style="font-size:16px;font-weight:600;margin-bottom:8px;">'+ob.name+(ob.eco?' <span class="badge" style="background:#f0fdf4;color:#166534;font-size:10px;">Ecosystem</span>':'')+(isIE?' <span class="badge" style="background:#fef3d0;color:#7a5010;font-size:10px;">&#127470;&#127466; Ireland</span>':'')+'</h2><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">'+sBadge(ob.status)+' '+specPill(ob.spec)+'</div></div><button class="dp-close" onclick="closeDet()">&times;</button></div><div class="dp-sec"><h3>Info</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:13px;"><div><div style="font-size:11px;color:var(--muted);margin-bottom:2px;">Started</div><div>'+ob.started+'</div></div><div><div style="font-size:11px;color:var(--muted);margin-bottom:2px;">HubSpot Deal ID</div><div style="font-family:var(--mono);font-size:12px;">'+(ob.deal||'\u2014')+'</div></div><div><div style="font-size:11px;color:var(--muted);margin-bottom:2px;">Expected go-live</div>'+(canEdit?'<input type="date" value="'+(ob.golive||'')+'" onchange="updateGL(\''+ob.id+'\',this.value)" style="padding:4px 6px;border:0.5px solid var(--border);border-radius:4px;font-family:var(--font);font-size:12px;background:#fafaf8;outline:none;"/>':'<div>'+(ob.golive?new Date(ob.golive+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'\u2014')+'</div>')+'</div><div><div style="font-size:11px;color:var(--muted);margin-bottom:2px;">Country</div><div>'+(ob.country||'\u2014')+'</div></div><div><div style="font-size:11px;color:var(--muted);margin-bottom:2px;">HubSpot Ticket</div><div style="font-family:var(--mono);font-size:12px;">'+(ob.hsTicketId||'\u2014')+'</div></div></div></div><div class="dp-sec"><h3>Overall progress \u2014 '+prog.overall+'% ('+prog.don+'/'+prog.tot+' tasks)</h3><div class="overall-prog-bar"><div class="overall-prog-fill" style="width:'+prog.overall+'%;background:'+(prog.overall===100?'#3d7a12':prog.overall>=50?'#8DC63F':'#f0c040')+'"></div></div>'+mods+'</div><div class="dp-sec"><h3>Notes</h3><textarea id="dp-notes" style="width:100%;padding:9px;border:0.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;resize:vertical;min-height:80px;background:#fafaf8;color:var(--text);outline:none;">'+(ob.notes||'')+'</textarea><button class="abtn o" style="margin-top:8px;" onclick="saveNotes(\''+ob.id+'\')">Save notes</button></div></div>';
+  const area=document.getElementById('detail-'+openDetPage);if(area){area.innerHTML=html;setTimeout(()=>area.scrollIntoView({behavior:'smooth',block:'nearest'}),50);}
+}
+
+function buildMod(key,mod,ob,prog,canEdit,isIE){
+  const mp=prog.pm[key]||{done:0,total:0,pct:0};
+  const isOpen=openMods[ob.id+'_'+key]!==false;
+  const tasks=key==='step0'?STEP0.tasks:mod.tasks;
+  const thtml=tasks.map(t=>{const done=!!ob.cl[t.id];return '<div class="ci'+(t.isGoLive?' golive-task':'')+(t.irelandOnly?' ireland-flag':'')+'"><div class="cb '+(done?'done':'')+'" style="'+(done?'background:'+mod.color+';border-color:'+mod.color+';':'')+(!canEdit?'opacity:.5;cursor:default;':'')+'" onclick="'+(canEdit?'chk(\''+ob.id+'\',\''+t.id+'\')':'')+'" ></div><div class="ct '+(done?'done':'')+'"><div class="ctitle">'+t.title+(t.irelandOnly?'<span class="ireland-badge">&#127470;&#127466; Ireland only</span>':'')+(t.isGoLive?' \uD83D\uDFE2':'')+'</div>'+(t.claude&&!done&&canEdit?'<button class="cbtn" onclick="runC(\''+ob.id+'\',\''+t.ca+'\')">&#9654; Run with Claude</button>':'')+'</div></div>';}).join('');
+  return '<div class="mod-section"><div class="mod-head" onclick="toggleMod(\''+ob.id+'\',\''+key+'\',this)"><div style="width:10px;height:10px;border-radius:50%;background:'+mod.color+';flex-shrink:0;"></div><span class="mod-label">'+mod.label+'</span><div class="mod-prog-bar"><div class="mod-prog-fill" style="width:'+mp.pct+'%;background:'+mod.color+';"></div></div><span class="mod-stats">'+mp.done+'/'+mp.total+'</span><span class="mod-toggle '+(isOpen?'open':'')+'">&#9660;</span></div><div class="mod-tasks '+(isOpen?'open':'')+'" id="mt-'+ob.id+'-'+key+'">'+thtml+'</div></div>';}
+
+function toggleMod(obId,key,el){const k=obId+'_'+key;openMods[k]=openMods[k]===false;const tasks=el.nextElementSibling;const arrow=el.querySelector('.mod-toggle');tasks.classList.toggle('open',openMods[k]!==false);arrow.classList.toggle('open',openMods[k]!==false);}
+
+function closeDet(){['dashboard','onboardings'].forEach(p=>{const a=document.getElementById('detail-'+p);if(a)a.innerHTML='';});openObId=null;}
+
+function chk(obId,tid){const ob=obs.find(o=>o.id===obId);if(!ob)return;ob.cl[tid]=!ob.cl[tid];const allT=[...STEP0.tasks,...Object.values(MD).flatMap(m=>m.tasks)];const t=allT.find(x=>x.id===tid);addAct(user+(ob.cl[tid]?' completed ':' unchecked ')+'"'+(t?.title||tid)+'" for '+ob.name,ob.cl[tid]?'#8DC63F':'#888');save();render();openDet(obId);}
+
+function runC(obId,action){const ob=obs.find(o=>o.id===obId);if(!ob)return;const prompt='FORE GROUP ONBOARDING ACTION\n\nClient: '+ob.name+'\nDeal ID: '+ob.deal+'\nModules: '+ob.products.join(', ')+'\nSpecialist: '+ob.spec+'\nGo-live: '+(ob.golive||'TBD')+'\nCountry: '+(ob.country||'\u2014')+'\nNotes: '+(ob.notes||'None')+'\n\nACTION:\n'+action+'\n\nCredentials: 1Password under "'+ob.name+'"';navigator.clipboard.writeText(prompt).then(()=>showToast('Prompt copied \u2014 paste into Claude')).catch(()=>{showToast('See console');console.log(prompt);});}
+
+function updateGL(obId,d){const ob=obs.find(o=>o.id===obId);if(!ob)return;ob.golive=d;addAct(user+' updated go-live for '+ob.name+' to '+d,'#8DC63F');if(ob.deal)writeHSGL(ob.deal,d);save();rCal();rDash();rObTable();showToast('Go-live updated \u2014 syncing to HubSpot');}
+function saveNotes(obId){const ob=obs.find(o=>o.id===obId);if(!ob)return;const ta=document.getElementById('dp-notes');if(ta){ob.notes=ta.value;save();showToast('Notes saved');}}
+
+// MODAL
+function openModal(){document.getElementById('modal-inner').innerHTML=buildModal();document.getElementById('modal-overlay').classList.add('open');}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+function handleOverlayClick(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
+function buildModal(){const tags=Object.entries(MD).map(([k,v])=>'<div class="cbtag'+(k==='Golf'?' sel':'')+'" data-v="'+k+'" onclick="this.classList.toggle(\'sel\')" style="border-color:'+v.dot+'">'+v.label+'</div>').join('');return '<div class="mhead"><h2>New onboarding</h2><button class="mclose" onclick="closeModal()">&times;</button></div><div class="mbody"><label>Client name</label><input type="text" id="n-name" placeholder="e.g. Fancourt Golf Club"/><label>Modules</label><div class="cbrow" id="n-prods">'+tags+'</div><label>Country of deal</label><select id="n-country"><option value="">Select country...</option><option value="ZA">South Africa</option><option value="GB">United Kingdom</option><option value="IE">Ireland &#127470;&#127466;</option><option value="AU">Australia</option><option value="NZ">New Zealand</option><option value="IT">Italy</option><option value="Other">Other</option></select><label>Ecosystem Support sold?</label><select id="n-eco"><option value="no">No</option><option value="yes">Yes</option></select><label>Assign to</label><select id="n-spec"><option value="Unassigned">Unassigned</option><option>Richard</option><option>Jordan</option><option>Florent</option></select><label>HubSpot Deal ID</label><input type="text" id="n-deal" placeholder="e.g. 10780021687"/><label>Expected go-live date</label><input type="date" id="n-golive"/><label>Notes</label><textarea id="n-notes" placeholder="Tech stack, key contacts, anything from the handover call..."></textarea></div><div class="mfooter"><button class="btn-s" onclick="closeModal()">Cancel</button><button class="btn-p" onclick="createOb()">Create onboarding</button></div>';}
+function createOb(){const name=document.getElementById('n-name').value.trim();if(!name){showToast('Please enter a client name');return;}const products=[...document.querySelectorAll('#n-prods .cbtag.sel')].map(e=>e.dataset.v);if(!products.length){showToast('Select at least one module');return;}const ob={id:'ob'+Date.now(),name,products,spec:document.getElementById('n-spec').value,status:'Active',deal:document.getElementById('n-deal').value,hsTicketId:'',country:document.getElementById('n-country').value,eco:document.getElementById('n-eco').value==='yes',notes:document.getElementById('n-notes').value,started:new Date().toISOString().split('T')[0],golive:document.getElementById('n-golive').value,fromHS:false,cl:buildCL(products)};obs.push(ob);addAct(user+' manually created onboarding for '+name,'#8DC63F');save();render();closeModal();showToast('Onboarding created for '+name);}
+
+// NAV
+function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(btn)btn.classList.add('active');closeDet();}
+function showDoc(id,el){document.querySelectorAll('.da').forEach(a=>a.classList.remove('active'));document.querySelectorAll('.dni').forEach(n=>n.classList.remove('active'));const a=document.getElementById('doc-'+id);if(a)a.classList.add('active');if(el)el.classList.add('active');}
+function setRole(r){role=r;user=r==='head'?'Tiaan':'Richard';document.getElementById('rh').classList.toggle('active',r==='head');document.getElementById('rs').classList.toggle('active',r==='spec');document.getElementById('nav-av').textContent=SPI[user];document.getElementById('dgreet').textContent='Good morning, '+user;document.getElementById('dsub').textContent=r==='head'?"Here's your team's onboarding overview":"Here are your assigned onboardings";['cap-tab','settings-tab','tab-inbox'].forEach(id=>{const t=document.getElementById(id);if(t)t.style.display=r==='spec'?'none':'';});render();closeDet();}
+
+// UTILS
+function addAct(text,color){acts.unshift({text,time:'Just now',color:color||'#8DC63F',unread:true});if(acts.length>30)acts.pop();}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+
+boot();
+
+</script>
+</body>
+</html>
